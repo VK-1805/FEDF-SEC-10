@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather App</title>
+<style>
+ body{font-family:Arial;text-align:center;margin:50px;background:#f0f4f8;}
+ .box{margin-top:20px;padding:20px;display:inline-block;border-radius:10px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+ input,button{padding:10px;margin:5px;border-radius:5px;border:1px solid #ccc;}
+ button{background:#0077cc;color:#fff;cursor:pointer;} button:hover{background:#005fa3;}
+</style>
+</head>
+<body>
+<h1>Weather App</h1>
+<input id="city" placeholder="Enter city" />
+<button onclick="getWeather()">Get Weather</button>
+<div id="result" class="box"></div>
+
+<script>
+async function getWeather(city=document.getElementById('city').value.trim()){
+ if(!city) return result.innerHTML="<p>Enter a city.</p>";
+ try{
+   let r=await fetch(`https://wttr.in/${city}?format=j1`);
+   if(!r.ok) throw new Error("City not found.");
+   let d=await r.json(),c=d.current_condition[0];
+   result.innerHTML=`<h2>${city}</h2>
+     <p><b>Temp:</b> ${c.temp_C}°C</p>
+     <p><b>Condition:</b> ${c.weatherDesc[0].value}</p>
+     <p><b>Humidity:</b> ${c.humidity}%</p>`;
+   localStorage.setItem("lastCity",city);
+ }catch(e){result.innerHTML=`<p style="color:red">${e.message}</p>`;}
+}
+onload=()=>localStorage.lastCity && getWeather(localStorage.lastCity);
+</script>
+</body>
+</html>
+  
